@@ -23,9 +23,31 @@ public class ServicioVendedor {
 	}
 
 	public void generarGarantia(String codigo, String nombreCliente) {
-		double precioGarantia = 0.0;
-		Date fechaFinGarantia = new Date();
-
+		Producto producto = this.repositorioProducto.obtenerPorCodigo(codigo);
+		double precioGarantia;
+		Date fechaFinGarantia;
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		if(producto.getPrecio() > 500000){
+		  precioGarantia = 0.2 * producto.getPrecio();
+		  int day = 0;
+		  int count = 1;
+		  while(count < 200){
+			 calendar.add(Calendar.DAY_OF_YEAR, 1);
+			 day = calendar.get(Calendar.DAY_OF_WEEK);
+			 if (day != 2){
+				count++;
+			 }
+		  }
+		  if(day == 1) {
+			 calendar.add(Calendar.DAY_OF_YEAR, 2);
+			  }
+			} else {
+			  precioGarantia = 0.1 * producto.getPrecio();
+			  calendar.add(Calendar.DAY_OF_YEAR, 100);
+			}
+			fechaFinGarantia = calendar.getTime();
+		this.repositorioGarantia.agregar(new GarantiaExtendida(producto, new Date(), fechaFinGarantia, precioGarantia, nombreCliente));
 	}
 
 	public boolean tieneGarantia(String codigo) {
