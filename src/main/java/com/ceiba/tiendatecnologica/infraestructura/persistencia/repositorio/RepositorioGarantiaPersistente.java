@@ -36,7 +36,7 @@ public class RepositorioGarantiaPersistente implements RepositorioGarantiaExtend
 	}
 
 	@Override
-	public String agregar(String codigo, String nombreCliente, ComandoProducto comandoProducto) {
+	public void agregar(String codigo, String nombreCliente, ComandoProducto comandoProducto) {
 
 		Producto producto = this.fabricaProducto.crearProducto(comandoProducto);
 		double precioGarantia = 0.0;
@@ -66,8 +66,7 @@ public class RepositorioGarantiaPersistente implements RepositorioGarantiaExtend
 		GarantiaExtendida garantia = new GarantiaExtendida(producto, new Date(), fechaFinGarantia, precioGarantia, nombreCliente);
 		GarantiaExtendidaEntity garantiaEntity = buildGarantiaExtendidaEntity(garantia);
 		entityManager.persist(garantiaEntity);
-		String message = garantiaEntity == null ? "" : "AA";
-		return message;
+
 
 	}
 	

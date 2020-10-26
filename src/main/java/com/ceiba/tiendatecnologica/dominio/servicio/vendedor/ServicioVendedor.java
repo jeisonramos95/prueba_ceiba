@@ -34,7 +34,8 @@ public class ServicioVendedor {
 		}
 		if(count == 3){
 			return ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA;
-			
+
+
 			// return new Error("Error", ESTE mensajes);
 		}
 		this.repositorioGarantia.agregar(codigo, nombreCliente, comandoProducto);
