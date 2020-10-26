@@ -1,5 +1,6 @@
 package com.ceiba.tiendatecnologica.aplicacion.manejadores.garantia;
 
+import com.ceiba.tiendatecnologica.aplicacion.comando.ComandoProducto;
 import com.ceiba.tiendatecnologica.dominio.servicio.vendedor.ServicioVendedor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +14,8 @@ public class ManejadorGenerarGarantia {
 	}
 	
 	@Transactional
-	public void ejecutar(String codigoProducto,String nombreCliente) {
+	public String ejecutar(String codigoProducto,String nombreCliente, ComandoProducto comandoProducto) {
 
-		this.servicioVendedor.generarGarantia(codigoProducto, nombreCliente);
+		return this.servicioVendedor.generarGarantia(codigoProducto, nombreCliente, comandoProducto);
 	}
 }

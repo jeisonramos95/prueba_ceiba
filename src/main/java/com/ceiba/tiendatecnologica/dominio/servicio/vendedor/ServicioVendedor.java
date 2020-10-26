@@ -13,6 +13,8 @@ import java.util.Date;
 public class ServicioVendedor {
 
 	public static final String EL_PRODUCTO_TIENE_GARANTIA = "El producto ya cuenta con una garantía extendida";
+	public static final String ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA = "Este producto no cuenta con garantía extendida";
+	public static final String ESTE_PRODUCTO_SI_CUENTA_CON_GARANTIA = "La garantia se generó exitosamente";
 
 	private RepositorioProducto repositorioProducto;
 	private RepositorioGarantiaExtendida repositorioGarantia;
@@ -22,32 +24,21 @@ public class ServicioVendedor {
 		this.repositorioGarantia = repositorioGarantia;
 	}
 
-	public void generarGarantia(String codigo, String nombreCliente) {
-		Producto producto = this.repositorioProducto.obtenerPorCodigo(codigo);
-		double precioGarantia;
-		Date fechaFinGarantia;
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		if(producto.getPrecio() > 500000){
-		  precioGarantia = 0.2 * producto.getPrecio();
-		  int day = 0;
-		  int count = 1;
-		  while(count < 200){
-			 calendar.add(Calendar.DAY_OF_YEAR, 1);
-			 day = calendar.get(Calendar.DAY_OF_WEEK);
-			 if (day != 2){
+	public String generarGarantia(String codigo, String nombreCliente, ComandoProducto comandoProducto) {
+
+		int count = 0;
+		for (int i = 0; i < codigo.length(); i++) {
+			if (codigo.charAt(i) == 'a' || codigo.charAt(i) == 'e' || codigo.charAt(i) == 'i' || codigo.charAt(i) == 'o' || codigo.charAt(i) == 'u' || codigo.charAt(i) == 'A'  || codigo.charAt(i) == 'E' || codigo.charAt(i) == 'I' || codigo.charAt(i) == 'O' || codigo.charAt(i) == 'U') {
 				count++;
-			 }
-		  }
-		  if(day == 1) {
-			 calendar.add(Calendar.DAY_OF_YEAR, 2);
-			  }
-			} else {
-			  precioGarantia = 0.1 * producto.getPrecio();
-			  calendar.add(Calendar.DAY_OF_YEAR, 100);
 			}
-			fechaFinGarantia = calendar.getTime();
-		this.repositorioGarantia.agregar(new GarantiaExtendida(producto, new Date(), fechaFinGarantia, precioGarantia, nombreCliente));
+		}
+		if(count == 3){
+			return ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA;
+			
+			// return new Error("Error", ESTE mensajes);
+		}
+		this.repositorioGarantia.agregar(codigo, nombreCliente, comandoProducto);
+		return ESTE_PRODUCTO_SI_CUENTA_CON_GARANTIA;
 	}
 
 	public boolean tieneGarantia(String codigo) {

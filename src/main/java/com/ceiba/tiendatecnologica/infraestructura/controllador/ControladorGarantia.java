@@ -5,6 +5,7 @@ import com.ceiba.tiendatecnologica.aplicacion.manejadores.garantia.ManejadorGene
 import com.ceiba.tiendatecnologica.aplicacion.manejadores.garantia.ManejadorObtenerGarantia;
 import com.ceiba.tiendatecnologica.dominio.GarantiaExtendida;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,8 +23,8 @@ public class ControladorGarantia {
 	}
 
 	@PostMapping("/{idProducto}/{nombreCliente}")
-	public void generar(@PathVariable(name = "idProducto") String codigoProducto, @PathVariable(name = "nombreCliente") String nombreCliente, @RequestBody ComandoProducto comandoProducto) {
-		this.mananeManejadorGenerarGarantia.ejecutar(codigoProducto, nombreCliente);
+	public ResponseEntity generar(@PathVariable(name = "idProducto") String codigoProducto, @PathVariable(name = "nombreCliente") String nombreCliente, @RequestBody ComandoProducto comandoProducto) {
+		return ResponseEntity.ok(this.mananeManejadorGenerarGarantia.ejecutar(codigoProducto, nombreCliente, comandoProducto));
 	}
 
 	@GetMapping("/{id}")

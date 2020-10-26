@@ -1,5 +1,6 @@
 package com.ceiba.tiendatecnologica.dominio.repositorio;
 
+import com.ceiba.tiendatecnologica.aplicacion.comando.ComandoProducto;
 import com.ceiba.tiendatecnologica.dominio.GarantiaExtendida;
 import com.ceiba.tiendatecnologica.dominio.Producto;
 
@@ -16,7 +17,7 @@ public interface RepositorioGarantiaExtendida {
 	 * Permite agregar una garantia al repositorio de garantia
 	 * @param garantia
 	 */
-	void agregar(GarantiaExtendida garantia);
+	String agregar(String codigo, String nombreCliente, ComandoProducto comandoProducto);
 	
 	/**
 	 * Permite obtener una garantia extendida por el codigo del producto

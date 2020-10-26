@@ -1,5 +1,7 @@
 package com.ceiba.tiendatecnologica.infraestructura.persistencia.repositorio;
 
+import com.ceiba.tiendatecnologica.aplicacion.comando.ComandoProducto;
+import com.ceiba.tiendatecnologica.aplicacion.fabrica.FabricaProducto;
 import com.ceiba.tiendatecnologica.dominio.GarantiaExtendida;
 import com.ceiba.tiendatecnologica.dominio.Producto;
 import com.ceiba.tiendatecnologica.dominio.repositorio.RepositorioGarantiaExtendida;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -23,17 +27,48 @@ public class RepositorioGarantiaPersistente implements RepositorioGarantiaExtend
 	private EntityManager entityManager;
 
 	private RepositorioProductoJPA repositorioProductoJPA;
+	private FabricaProducto fabricaProducto;
 
 	public RepositorioGarantiaPersistente(EntityManager entityManager, RepositorioProducto repositorioProducto) {
 		this.entityManager = entityManager;
 		this.repositorioProductoJPA = (RepositorioProductoJPA) repositorioProducto;
+		this.fabricaProducto = new FabricaProducto();
 	}
 
 	@Override
-	public void agregar(GarantiaExtendida garantia) {
+	public String agregar(String codigo, String nombreCliente, ComandoProducto comandoProducto) {
+
+		Producto producto = this.fabricaProducto.crearProducto(comandoProducto);
+		double precioGarantia = 0.0;
+		Date fechaFinGarantia = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+
+		if(producto.getPrecio() > 500000){
+			precioGarantia = 0.2 * producto.getPrecio();
+			int day = 0;
+			int count = 1;
+			while(count < 200){
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				day = calendar.get(Calendar.DAY_OF_WEEK);
+				if (day != 2){
+					count++;
+				}
+			}
+			if(day == 1) {
+				calendar.add(Calendar.DAY_OF_YEAR, 2);
+			}
+		} else {
+			precioGarantia = 0.1 * producto.getPrecio();
+			calendar.add(Calendar.DAY_OF_YEAR, 100);
+		}
+		fechaFinGarantia = calendar.getTime();
+		GarantiaExtendida garantia = new GarantiaExtendida(producto, new Date(), fechaFinGarantia, precioGarantia, nombreCliente);
 		GarantiaExtendidaEntity garantiaEntity = buildGarantiaExtendidaEntity(garantia);
 		entityManager.persist(garantiaEntity);
-		
+		String message = garantiaEntity == null ? "" : "AA";
+		return message;
+
 	}
 	
 	@Override

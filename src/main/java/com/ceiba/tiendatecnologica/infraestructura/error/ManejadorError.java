@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ManejadorError extends ResponseEntityExceptionHandler {
 
     private static final String OCURRIO_UN_ERROR_FAVOR_CONTACTAR_AL_ADMINISTRADOR = "Ocurrió un error favor contactar al administrador.";
-
+    
     private static final ConcurrentHashMap<String, Integer> CODIGOS_ESTADO = new ConcurrentHashMap<>();
 
     public ManejadorError() {

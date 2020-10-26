@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 public class ControladorGarantiaTest {
-    public static final String ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA = "Este producto no cuenta con garantía extendida";
+
 
     @Autowired
     private MockMvc mvc;
@@ -32,6 +32,7 @@ public class ControladorGarantiaTest {
     public void generarGarantiaProducto() throws Exception
     {
         ComandoProducto comandoProducto= new ProductoTestDataBuilder().buildComando();
+
         mvc.perform( MockMvcRequestBuilders
                 .post("/garantia/{idProducto}/{nombreCliente}","CODIGO","CLIENTE")
                 .content(objectMapper.writeValueAsString(comandoProducto))
