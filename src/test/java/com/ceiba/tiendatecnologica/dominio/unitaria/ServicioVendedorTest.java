@@ -2,6 +2,7 @@ package com.ceiba.tiendatecnologica.dominio.unitaria;
 
 
 import com.ceiba.tiendatecnologica.aplicacion.comando.ComandoProducto;
+import com.ceiba.tiendatecnologica.dominio.GarantiaExtendida;
 import com.ceiba.tiendatecnologica.dominio.Producto;
 import com.ceiba.tiendatecnologica.dominio.servicio.vendedor.ServicioVendedor;
 import com.ceiba.tiendatecnologica.dominio.repositorio.RepositorioGarantiaExtendida;
@@ -9,6 +10,7 @@ import com.ceiba.tiendatecnologica.dominio.repositorio.RepositorioProducto;
 import com.ceiba.tiendatecnologica.testdatabuilder.ProductoTestDataBuilder;
 import org.junit.Test;
 
+import static com.ceiba.tiendatecnologica.dominio.servicio.vendedor.ServicioVendedor.ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -59,29 +61,35 @@ public class ServicioVendedorTest {
 		assertFalse(existeProducto);
 	}
 
-	@Test
-	public void productoConTresVocalesTest(){
+	@Test (expected = RuntimeException.class)
+	public void generarGarantiaCodigoTresVocaes(){
 
 		//arrange
 		ProductoTestDataBuilder productoestDataBuilder = new ProductoTestDataBuilder();
 
 		productoestDataBuilder.conCodigo("F12ASEU89");
-		Producto producto = productoestDataBuilder.build();
-
+		ComandoProducto comandoProducto = new ComandoProducto("FEUA89", "Tv LG", 600000.00);
 		RepositorioGarantiaExtendida repositorioGarantia = mock(RepositorioGarantiaExtendida.class);
 		RepositorioProducto repositorioProducto = mock(RepositorioProducto.class);
 
 		//act
 		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
-		String response = servicioVendedor.generarGarantia(producto.getCodigo(), null, null);
 
-		//assert
-		assertEquals(ServicioVendedor.ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA, response);
+		try
+		{
+			GarantiaExtendida response = servicioVendedor.generarGarantia(null, null, comandoProducto);
+		}
+		catch(RuntimeException re)
+		{
+			assertEquals(ESTE_PRODUCTO_NO_CUENTA_CON_GARANTIA, re.getMessage());
+			throw re;
+		}
+		fail("No se lanza el error en generar garantia!");
 
 	}
 
 	@Test
-	public void productoSinTresVocalesTest(){
+	public void generarGarantiaCodigoNoContieneTresVocales(){
 
 		//arrange
 		ProductoTestDataBuilder productoestDataBuilder = new ProductoTestDataBuilder();
@@ -90,13 +98,63 @@ public class ServicioVendedorTest {
 
 		RepositorioGarantiaExtendida repositorioGarantia = mock(RepositorioGarantiaExtendida.class);
 		RepositorioProducto repositorioProducto = mock(RepositorioProducto.class);
+		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
 
 		//act
-		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
-		String response = servicioVendedor.generarGarantia(comandoProducto.getCodigo(), "Jeison", comandoProducto);
+		GarantiaExtendida response = servicioVendedor.generarGarantia(comandoProducto.getCodigo(), "Jeison", comandoProducto);
 
 		//assert
-		assertEquals(ServicioVendedor.ESTE_PRODUCTO_SI_CUENTA_CON_GARANTIA, response);
+		assertEquals("FEU789", response.getProducto().getCodigo());
 
+	}
+
+	@Test
+	public void retornaTrueConCodigoTresVocales(){
+		RepositorioGarantiaExtendida repositorioGarantia = mock(RepositorioGarantiaExtendida.class);
+		RepositorioProducto repositorioProducto = mock(RepositorioProducto.class);
+		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
+
+		//act
+		boolean result = servicioVendedor.tieneTresVocales("AEILK");
+		assertEquals(result, true);
+
+	}
+
+	@Test
+	public void retornaFalseConCodigoDiferenteTresVocales(){
+		RepositorioGarantiaExtendida repositorioGarantia = mock(RepositorioGarantiaExtendida.class);
+		RepositorioProducto repositorioProducto = mock(RepositorioProducto.class);
+		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
+
+		//act
+		boolean result = servicioVendedor.tieneTresVocales("ARILK");
+		assertEquals(result, false);
+
+	}
+
+	@Test
+	public void precioGarantiaConPrecioProductoMayorAQuinientos() {
+		RepositorioGarantiaExtendida repositorioGarantia = mock(RepositorioGarantiaExtendida.class);
+		RepositorioProducto repositorioProducto = mock(RepositorioProducto.class);
+		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
+		ComandoProducto comandoProducto = new ComandoProducto("FEU789", "Tv LG", 600000.00);
+
+		//act
+		GarantiaExtendida garantia = servicioVendedor.obtenerGarantia(comandoProducto, "Jeison");
+
+		assertTrue(garantia.getPrecioGarantia() == 120000.00);
+	}
+
+	@Test
+	public void precioGarantiaConPrecioProductoMenorIgualAQuinientos() {
+		RepositorioGarantiaExtendida repositorioGarantia = mock(RepositorioGarantiaExtendida.class);
+		RepositorioProducto repositorioProducto = mock(RepositorioProducto.class);
+		ServicioVendedor servicioVendedor = new ServicioVendedor(repositorioProducto, repositorioGarantia);
+		ComandoProducto comandoProducto = new ComandoProducto("FEU789", "Tv LG", 400000.00);
+
+		//act
+		GarantiaExtendida garantia = servicioVendedor.obtenerGarantia(comandoProducto, "Jeison");
+
+		assertTrue(garantia.getPrecioGarantia() == 40000.00);
 	}
 }

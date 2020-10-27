@@ -17,7 +17,7 @@ public interface RepositorioGarantiaExtendida {
 	 * Permite agregar una garantia al repositorio de garantia
 	 * @param garantia
 	 */
-	void agregar(String codigo, String nombreCliente, ComandoProducto comandoProducto);
+	void agregar(GarantiaExtendida garantia);
 	
 	/**
 	 * Permite obtener una garantia extendida por el codigo del producto

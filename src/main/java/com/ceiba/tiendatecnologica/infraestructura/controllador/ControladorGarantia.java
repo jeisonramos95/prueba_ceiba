@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("/garantia")
 public class ControladorGarantia {
@@ -23,8 +25,8 @@ public class ControladorGarantia {
 	}
 
 	@PostMapping("/{idProducto}/{nombreCliente}")
-	public ResponseEntity generar(@PathVariable(name = "idProducto") String codigoProducto, @PathVariable(name = "nombreCliente") String nombreCliente, @RequestBody ComandoProducto comandoProducto) {
-		return ResponseEntity.ok(this.mananeManejadorGenerarGarantia.ejecutar(codigoProducto, nombreCliente, comandoProducto));
+	public GarantiaExtendida generar(@PathVariable(name = "idProducto") String codigoProducto, @PathVariable(name = "nombreCliente") String nombreCliente, @RequestBody ComandoProducto comandoProducto) {
+		return this.mananeManejadorGenerarGarantia.ejecutar(codigoProducto, nombreCliente, comandoProducto);
 	}
 
 	@GetMapping("/{id}")
